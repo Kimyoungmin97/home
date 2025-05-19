@@ -24,7 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ApiUtil {
 	
-	private final HouseRedisService houseRedisService;
+	// 실행 오류나서 redis 주석 처리해둠(혜원)
+	// private final HouseRedisService houseRedisService;
 	
 	@Value("${api.key_data}")
     private String serviceKey;

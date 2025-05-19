@@ -5,12 +5,12 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 
-@Service
-@RequiredArgsConstructor
+//@Service
+//@RequiredArgsConstructor
 public class HouseRedisService {
-	
-	private final RedisTemplate<String, Object> redisTemplate;
-	
+//	
+//	private final RedisTemplate<String, Object> redisTemplate;
+//	
 //	public void saveToRedis(House house) {
 //	    	String key = "house:" + house.getAptNm().replaceAll("\\s+", "");
 //	    	redisTemplate.opsForValue().set(key, house);
