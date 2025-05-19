@@ -16,4 +16,15 @@
 		<result column="deal_amount" property="dealAmount"/>
 	</resultMap>
 	
+	<!-- 검색어로 특정 아파트 조회 (GET /apartments/search?keyword=?) -->
+	<select id="searchApartmentsByName" parameterType="apartmentSearchResponseDto" resultMap="houseDealsMap">
+		select 
+		apt_seq, 
+	    umd_nm, jibun, road_nm, road_nm_bonbun, road_nm_bubun, 
+	    apt_nm, 
+	    latitude, longitude
+		from houseinfos
+		where apt_nm like concat('%', #{keyword} , '%');
+	</select>
+	
 </mapper>
