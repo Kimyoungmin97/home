@@ -7,12 +7,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.home.common.response.ApiResponse;
 
-@RestController
+import lombok.RequiredArgsConstructor;
+
+@RestController // @RequestBody 생략 가능
 @RequestMapping("/house")
+@RequiredArgsConstructor
 public class HouseController {
 
 	@GetMapping
 	public ResponseEntity<ApiResponse<Void>> list(){
 		return ResponseEntity.ok(ApiResponse.success());
 	}
+	
+	
 }

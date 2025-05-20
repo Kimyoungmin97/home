@@ -1,4 +1,4 @@
-package com.ssafy.home.user.service;
+package com.ssafy.home.user.model.service;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;

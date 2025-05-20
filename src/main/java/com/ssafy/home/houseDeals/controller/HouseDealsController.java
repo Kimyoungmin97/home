@@ -33,8 +33,8 @@ public class HouseDealsController {
 	//			select ~ from houseinfos where apt_nm like CONCAT('%', #{keyword}, '%')
 	
 	// 검색어로 특정 아파트 조회 
-	// GET /apartments/search?keyword=한신
-	@GetMapping("/apartments/search")
+	// GET /apartments?keyword=한신
+	@GetMapping("/apartments")
 	public ResponseEntity<?> searchApartmentsByName(@RequestParam String keyword
 		){ 
 		ApartmentSearchRequestDto requestDto = ApartmentSearchRequestDto.builder()
@@ -44,14 +44,11 @@ public class HouseDealsController {
 		List<ApartmentSearchResponseDto> result = houseDealsService.searchApartmentsByName(requestDto);  
 		
 		// 조회 정보 없음
-		if (result==null) return ResponseEntity.status(HttpStatus.NOT_FOUND) // 404
-				.body("조회된 데이터가 없습니다.");
-				// .build(); // 404
+//		if (result==null) return ResponseEntity.status(HttpStatus.NOT_FOUND) // 404
+//				.body("조회된 데이터가 없습니다.");
+//				// .build(); // 404
 		
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
-//	select *
-//	from houseinfos
-//	where apt_nm like concat('%', '한신', '%');
 	
 }

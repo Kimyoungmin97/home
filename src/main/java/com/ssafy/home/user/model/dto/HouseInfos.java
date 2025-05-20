@@ -1,4 +1,4 @@
-package com.ssafy.home.user.dto;
+package com.ssafy.home.user.model.dto;
 
 import java.util.ArrayList;
 import java.util.List;
