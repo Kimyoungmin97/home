@@ -44,12 +44,13 @@
 	<!-- 특정 매물의 실거래가 전체 내역 출력 -->
 	<select id="getHouseDealsByAptSeq" parameterType="string" resultMap="houseDealResponseMap">
 	    SELECT 
-	        hi.apt_seq, hi.apt_nm, hd.apt_dong, hd.floor, hd.exclu_use_ar, hd.deal_amount, 
-	        str_to_date(concat(hd.deal_year, lpad(hd.deal_month, 2, '0'), lpad(hd.deal_day, 2, '0')), '%Y%m%d') AS deal_date
-	    FROM housedeals hd
-	    JOIN houseinfos hi ON hd.apt_seq = hi.apt_seq
-	    WHERE hi.apt_seq = #{aptSeq}
-	    ORDER BY deal_date desc
+		    row_number() over ( order by str_to_date(concat(hd.deal_year, lpad(hd.deal_month, 2, '0'), lpad(hd.deal_day, 2, '0')), '%Y%m%d') desc ) as no
+		    ,hi.apt_seq, hi.apt_nm, hd.apt_dong, hd.floor, hd.exclu_use_ar, hd.deal_amount, 
+		    str_to_date(concat(hd.deal_year, lpad(hd.deal_month, 2, '0'), lpad(hd.deal_day, 2, '0')), '%Y%m%d') AS deal_date
+		FROM housedeals hd 
+		JOIN houseinfos hi ON hd.apt_seq = hi.apt_seq
+		WHERE hi.apt_seq = #{aptSeq}
+		ORDER BY deal_date desc;
 	</select>
 	
 </mapper>

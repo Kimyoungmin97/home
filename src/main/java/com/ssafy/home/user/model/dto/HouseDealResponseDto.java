@@ -8,6 +8,7 @@ import lombok.ToString;
 @Data
 @ToString
 public class HouseDealResponseDto {
+	private int no; 
 	private String aptSeq; // 아파트코드
     private String aptName; // 아파트명 
     private String aptDong; // 아파트동
