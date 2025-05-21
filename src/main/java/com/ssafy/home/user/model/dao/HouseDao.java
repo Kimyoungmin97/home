@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.ssafy.home.user.model.dto.HouseDealResponseDto;
 import com.ssafy.home.user.model.dto.SearchHouseResponseDto;
 
 
@@ -12,5 +13,6 @@ import com.ssafy.home.user.model.dto.SearchHouseResponseDto;
 public interface HouseDao {
 	
 	List<SearchHouseResponseDto> searchHousesByKeyword(String keyword);
-
+	
+	List<HouseDealResponseDto> getHouseDealsByAptSeq(String aptSeq);
 }
