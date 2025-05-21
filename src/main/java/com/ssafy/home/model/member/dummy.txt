@@ -1,0 +1,11 @@
+com.ssafy.home
+ ├── api         ← REST API 컨트롤러 모음 (URI는 /api/로 시작)
+ │   ├── house
+ │   │   └── HouseController.java
+ │   ├── member
+ │   └── ...
+ ├── common      ← 공통 응답, 예외처리, 유틸 등
+ ├── model       ← Entity, DAO, DTO, Service 등 핵심 로직
+ │   ├── house
+ │   ├── member
+ └── config      ← SecurityConfig, MyBatisConfig 등

@@ -1,0 +1,40 @@
+<Spring Security + JWT>
+[회원 로그인 요청] → [JWT 발급] → [프론트 저장] → [모든 API 요청 시 Authorization 헤더에 토큰 포함] → [Spring Security가 필터로 검증] → [인증된 사용자만 접근 허용]
+--
+1. application.xml 설정 □
+- jwt 토큰들 시간 설정
+
+2. 클래스 구조
+(1) JWT 유틸
+util.JwtTokenProvider ※ 아니면 JWTUtil
+용도 : JWT 토큰 생성/파싱/검증
+
+(2) UserDetails
+dto.CustomUserDetails 
+용도 : UserDetails 구현체 (Spring security 인증 주체 정의)
+
+(3) Security 필터
+filter.JWTAuthenticationFilter  
+용도 : 로그인 시 ID/PW 인증하고 JWT 발급
+
+filter.JWTVerificationFilter  
+용도 : 요청 헤더에 실린 JWT 검증하고 SecurityContext 에 인증 정보 설정
+
+filter.SecurityExceptionHandlingFilter
+용도 : 토큰 오류, 인증 실패 등의 예외 처리 전용 (JWT 관련 예외 처리)
+
+(4) Security 설정
+config.SecurityConfig
+용도 : 시큐리티 필터 체인 구성
+
+(5) 로그인 API
+controller.JwtAuthController
+용도 : 로그인 요청을 받고 토큰 발급
+
+service.CustomUserDetailService
+용도 : memberDao 와 커넥트
+
+
+
+
+
