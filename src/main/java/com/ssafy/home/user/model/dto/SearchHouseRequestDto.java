@@ -1,4 +1,4 @@
-package com.ssafy.home.houseDeals.model.dto;
+package com.ssafy.home.user.model.dto;
 
 // import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,6 @@ import lombok.ToString;
 // @AllArgsConstructor
 @ToString
 @Builder // Builder 패턴
-public class ApartmentSearchRequestDto {
+public class SearchHouseRequestDto {
 	private String keyword;
 }

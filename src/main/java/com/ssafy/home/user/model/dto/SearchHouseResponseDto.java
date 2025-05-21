@@ -1,11 +1,11 @@
-package com.ssafy.home.houseDeals.model.dto;
+package com.ssafy.home.user.model.dto;
 
 import lombok.Data;
 import lombok.ToString;
 
 @Data
 @ToString
-public class ApartmentSearchResponseDto {
+public class SearchHouseResponseDto {
 	// 아파트 이름, 코드
 	// 위치 (지명) + 위도&경도
 	private String aptSeq;

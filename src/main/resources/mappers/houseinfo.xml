@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ssafy.home.model.dao.HouseInfoDao">
+<mapper namespace="com.ssafy.home.user.model.dao.HouseDao">
 
 	<resultMap type="HouseInfos" id="houseInfosMap">
 		<id column="apt_seq" property="aptSeq"/>
@@ -21,5 +21,32 @@
 		<!-- 1:n의 관계 시 사용 -->
 		<collection property="houseDealList" column="aptSeq" ofType="HouseDeals" resultMap="com.ssafy.home.model.dao.HousedealsDao.houseDealsMap"></collection>
 	</resultMap>
+	
+	<!--  -->
+	<resultMap id="apartmentSearchResponseMap" type="com.ssafy.home.user.model.dto.SearchHouseResponseDto">
+		<!-- <id column="id" property="id"/> -->
+		<result column="apt_seq" property="aptSeq"/>
+		<result column="umd_nm" property="umdNm"/>
+        <result column="jibun" property="jibun"/>
+        <result column="road_nm" property="roadNm"/>
+        <result column="road_nm_bonbun" property="roadNmBonbun"/>
+        <result column="road_nm_bubun" property="roadNmBubun"/>
+        <result column="apt_nm" property="aptNm"/>
+        <result column="latitude" property="latitude"/>
+        <result column="longitude" property="longitude"/>
+	</resultMap>
+	
+	<!-- 검색어로 특정 아파트 조회 (GET /apartments/search?keyword=?) -->
+	<select id="searchHousesByKeyword" 
+			parameterType="string" 
+			resultMap="apartmentSearchResponseMap">
+		select 
+			apt_seq, 
+		    umd_nm, jibun, road_nm, road_nm_bonbun, road_nm_bubun, 
+		    apt_nm, 
+		    latitude, longitude
+			from houseinfos
+		where apt_nm like concat('%', #{keyword} , '%');
+	</select>
 	
 </mapper>
