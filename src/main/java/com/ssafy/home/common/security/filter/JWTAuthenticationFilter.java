@@ -10,12 +10,12 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.home.common.response.ApiResponse;
 import com.ssafy.home.common.security.dto.CustomUserDetails;
 import com.ssafy.home.common.security.util.JwtTokenProvider;
+import com.ssafy.home.common.util.ControllerHelper;
 import com.ssafy.home.domain.user.dto.User;
 import com.ssafy.home.domain.user.service.UserService;
-import com.ssafy.home.user.controller.ControllerHelper;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter implements ControllerHelper{
+public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter implements ControllerHelper {
 	
 	private final UserService userService;
 	private final JwtTokenProvider jwtTokenProvider;
@@ -49,22 +49,34 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
+		
 		// 1. token 전달
 		CustomUserDetails details = (CustomUserDetails) authResult.getPrincipal();
-		
 		User user = details.getUser();
 		
+		// 2. DB에 refreshToken 저장
 		String accessToken = jwtTokenProvider.createAccessToken(user);
 		String refreshToken = jwtTokenProvider.createRefreshToken(user);
 		user.setRefreshToken(refreshToken);
 		userService.update(user);
 		
-		Map<String, String> result = Map.of("status", "SUCCESS", "accessToken", accessToken, "refreshToken", refreshToken);
-		handleResult(response, result, HttpStatus.OK);
+		// 3. 응답
+		ApiResponse<?> body = ApiResponse.success(
+			Map.of("accessToken", accessToken, "refreshToken", refreshToken)
+		);
+		// Spring 을 응답을 만들어주지 않아서 직접 생성해야 함
+		// TODO: handleJsonResponse 만들어야 함
+		handleJsonResponse(response, body, HttpStatus.OK);
+		
+//		Map<String, String> result = Map.of("status", "SUCCESS", "accessToken", accessToken, "refreshToken", refreshToken);
+//		handleResult(response, result, HttpStatus.OK);
 		
 		return;
 	}
 	
+	/**
+	 * TODO : 여기서부터 다시 수정
+	 */
 	// 로그인 실패
     @Override
     public void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
@@ -73,16 +85,5 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         throw failed;
     }
 	
-	// 결과 전송 helper 메소드
-    private void handleResult(HttpServletResponse response, Map<String, ?> data, HttpStatus status) {
-        response.setContentType("application/json;charset=UTF-8");
-        try {
-            String jsonResponse = new ObjectMapper().writeValueAsString(data);
-            response.setStatus(status.value());
-            response.getWriter().write(jsonResponse);
-        } catch (IOException e) {
-            log.error("Error writing JSON response", e);
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        }
-    }
+	
 }
