@@ -5,7 +5,8 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public interface RestControllerHelper {
+public interface ControllerHelper {
+	
     default ResponseEntity<?> handleSuccess(Object data) {
         return handleSuccess(data, HttpStatus.OK);
     }
