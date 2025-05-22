@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ssafy.home.user.model.dao.HouseDao">
+<mapper namespace="com.ssafy.home.domain.house.dao.HouseDao">
 	
-	<resultMap id="apartmentSearchResponseMap" type="com.ssafy.home.user.model.dto.SearchHouseResponseDto">
+	<resultMap id="apartmentSearchResponseMap" type="SearchHouseResponseDto">
 		<!-- <id column="id" property="id"/> -->
 		<result column="apt_seq" property="aptSeq"/>
 		<result column="umd_nm" property="umdNm"/>
@@ -17,7 +17,7 @@
         <result column="longitude" property="longitude"/>
 	</resultMap>
 	
-	<resultMap id="houseDealResponseMap" type="com.ssafy.home.user.model.dto.HouseDealResponseDto">
+	<resultMap id="houseDealResponseMap" type="HouseDealResponseDto">
 	    <result column="apt_seq" property="aptSeq"/>
 	    <result column="apt_nm" property="aptName"/>
 	    <result column="apt_dong" property="aptDong"/>
