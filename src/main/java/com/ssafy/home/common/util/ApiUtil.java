@@ -19,7 +19,7 @@ import com.ssafy.home.domain.house.service.HouseRedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Component
+// @Component
 @RequiredArgsConstructor
 @Slf4j
 public class ApiUtil {

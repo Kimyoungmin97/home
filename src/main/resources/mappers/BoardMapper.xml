@@ -3,7 +3,19 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.home.domain.board.dao.BoardDao">
-	<resultMap type="PostDto" id="PostMap">
+
+<!-- 	<resultMap type="PostDto" id="PostMap">
+		<id column="post_id" property="postId"/>
+		<result column="apt_seq" property="aptSeq"/>
+        <result column="user_id" property="userId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="is_secret" property="isSecret"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+	</resultMap> -->
+	
+	<resultMap type="BoardListResponseDto" id="BoardListResponseMap">
 		<id column="post_id" property="postId"/>
 		<result column="apt_seq" property="aptSeq"/>
         <result column="user_id" property="userId"/>
@@ -14,13 +26,24 @@
         <result column="updated_at" property="updatedAt"/>
 	</resultMap>
 	
-	<resultMap type="BoardListResponseDto" id="BoardListResponseMap">
+	<resultMap type="BoardDetailResponseDto" id="BoardDetailResponseMap">
 		<id column="post_id" property="postId"/>
-		<result column="apt_seq" property="aptSeq"/>
-        <result column="user_id" property="userId"/>
+		<result column="apt_seq" property="aptSeq" />
+        <result column="p_user_id" property="userId"/>
         <result column="title" property="title"/>
-        <result column="content" property="content"/>
+        <result column="p_content" property="content"/>
         <result column="is_secret" property="isSecret"/>
+        <result column="p_created_at" property="createdAt"/>
+        <result column="p_updated_at" property="updatedAt"/>
+        
+        <collection property="comments" ofType="CommentResponseDto" resultMap="CommentResponseMap"/>
+	</resultMap>
+	
+	<resultMap type="CommentResponseDto" id="CommentResponseMap">
+		<id column="comment_id" property="commentId"/>
+		<result column="user_id" property="userId"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="content" property="content"/>
         <result column="created_at" property="createdAt"/>
         <result column="updated_at" property="updatedAt"/>
 	</resultMap>
@@ -45,5 +68,33 @@
 		SELECT count(*)
 		FROM posts
 	</select>
+	
+	<select id="selectBoardDetail" resultMap="BoardDetailResponseMap" parameterType="long">
+		SELECT 
+			p.post_id, p.apt_seq, p.user_id AS p_user_id, p.title, p.content AS p_content, p.is_secret, p.created_at AS p_created_at, p.updated_at AS p_updated_at,
+		    c.comment_id, c.user_id, c.parent_id, c.content, c.created_at, c.updated_at
+		FROM posts p
+		LEFT JOIN comments c ON p.post_id = c.post_id
+		WHERE p.post_id = #{postId}
+		ORDER BY c.comment_id;
+	</select>
+	
+	<select id="selectCommentsByPostId" resultMap="CommentResponseMap" parameterType="long">
+		SELECT comment_id, user_id, parent_id, content, created_at, updated_at
+		FROM comments
+		WHERE post_id = #{postId}
+		ORDER BY created_at ASC
+	</select>
+	
+	<insert id="insertComment" 
+			parameterType="CommentDto"
+			useGeneratedKeys="true"
+			keyProperty="commentId"
+			keyColumn="comment_id">
+		insert into comments (post_id, user_id, content
+		<if test="parentId != null">, parent_id</if>)
+		values (#{postId}, #{userId}, #{content}
+		<if test="parentId != null">, #{parentId}</if>)
+	</insert>
 
 </mapper>

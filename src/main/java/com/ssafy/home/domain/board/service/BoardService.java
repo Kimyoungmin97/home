@@ -4,10 +4,16 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.ssafy.home.common.exception.CustomException;
+import com.ssafy.home.common.exception.ErrorCode;
 import com.ssafy.home.common.page.PageRequestDto;
 import com.ssafy.home.domain.board.dao.BoardDao;
+import com.ssafy.home.domain.board.dto.BoardDetailResponseDto;
 import com.ssafy.home.domain.board.dto.BoardListResponseDto;
+import com.ssafy.home.domain.board.dto.CommentDto;
+import com.ssafy.home.domain.board.dto.CommentResponseDto;
 import com.ssafy.home.domain.board.dto.InsertBoardRequestDto;
+import com.ssafy.home.domain.board.dto.InsertCommentRequestDto;
 import com.ssafy.home.domain.board.dto.PostDto;
 import com.ssafy.home.domain.user.dao.UserDao;
 
@@ -41,5 +47,34 @@ public class BoardService {
 	
 	public long getTotalCount() {
 		return boardDao.selectBoardCount();
+	}
+	
+	public BoardDetailResponseDto getBoardDetail(long postId) {
+		BoardDetailResponseDto post = boardDao.selectBoardDetail(postId);
+		if (post==null) throw new CustomException(ErrorCode.BOARD_NOT_FOUND);
+//		
+//		List<CommentResponseDto> comments = boardDao.selectCommentsByPostId(postId);
+//		post.setComments(comments);
+		
+		return post;
+	}
+	
+	/**
+	 * 댓글 등록 (작성)
+	 */
+	public int insertComment(InsertCommentRequestDto requestDto, String username, long postId) {
+		// 1. users 테이블에서 user_id 조회해옴
+		int userId = userDao.selectUserId(username);
+				
+		CommentDto.CommentDtoBuilder builder = CommentDto.builder()
+				.postId(postId)
+				.userId(userId)	
+				.content(requestDto.getContent());
+		
+		if (requestDto.getParentId()!=null) builder.parentId(requestDto.getParentId());
+		
+		CommentDto comment = builder.build();
+		
+		return boardDao.insertComment(comment);
 	}
 }

@@ -4,6 +4,9 @@ import java.time.LocalDate;
 
 import lombok.Data;
 
+/**
+ * 일단 posts 에 있는 모든 항목 다 가져오는데 나중에 필요 시 몇 개는 생략
+ */
 @Data
 public class BoardListResponseDto {
 	private int postId; 		// 게시글 ID

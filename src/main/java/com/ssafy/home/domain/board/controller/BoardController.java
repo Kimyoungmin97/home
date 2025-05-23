@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,8 +16,10 @@ import com.ssafy.home.common.page.PageRequestDto;
 import com.ssafy.home.common.page.PageResponseDto;
 import com.ssafy.home.common.response.ApiResponse;
 import com.ssafy.home.common.security.dto.CustomUserDetails;
+import com.ssafy.home.domain.board.dto.BoardDetailResponseDto;
 import com.ssafy.home.domain.board.dto.BoardListResponseDto;
 import com.ssafy.home.domain.board.dto.InsertBoardRequestDto;
+import com.ssafy.home.domain.board.dto.InsertCommentRequestDto;
 import com.ssafy.home.domain.board.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,23 +33,6 @@ import lombok.RequiredArgsConstructor;
 public class BoardController {
 	
 	private final BoardService boardService;
-	
-	/**
-	 * 게시판 글 작성
-	 * POST /api/boards
-	 */
-	@PreAuthorize("hasRole('USER')")
-	@PostMapping
-	public ResponseEntity<?> insertBoard(
-			@RequestBody InsertBoardRequestDto requestDto,
-			@AuthenticationPrincipal CustomUserDetails userDetails
-			){
-		String username = userDetails.getUsername(); // username 가져오기
-		boardService.insertBoard(requestDto, username);
-		
-		
-		return ResponseEntity.ok(ApiResponse.success("게시글 등록 완료"));
-	}
 	
 	/**
 	 * 게시판 글 내역 조회
@@ -67,4 +53,70 @@ public class BoardController {
 				
 		return ResponseEntity.ok(ApiResponse.success(pagingList));
 	}
+	
+	/**
+	 * 게시판 글 작성 (게시글 등록)
+	 * POST /api/boards
+	 */
+	@PreAuthorize("hasRole('USER')")
+	@PostMapping
+	public ResponseEntity<?> insertBoard(
+			@RequestBody InsertBoardRequestDto requestDto,
+			@AuthenticationPrincipal CustomUserDetails userDetails
+			){
+		String username = userDetails.getUsername(); // username 가져오기
+		boardService.insertBoard(requestDto, username);
+		
+		
+		return ResponseEntity.ok(ApiResponse.success("게시글 등록 완료"));
+	}
+	
+	/**
+	 * 게시글 상세 보기 (댓글도 같이 가져와야 함)
+	 * GET /api/boards/{postId}
+	 */
+	@GetMapping("/{postId}")
+	public ResponseEntity<?> getBoardDeatil(@PathVariable long postId){
+		BoardDetailResponseDto result = boardService.getBoardDetail(postId);
+		return ResponseEntity.ok(ApiResponse.success(result));
+	}
+	
+	
+	/**
+	 * 게시글 수정
+	 * PUT /api/boards/{postId}
+	 */
+	
+	/**
+	 * 게시글 삭제
+	 * DELETE /api/boards/{postId}
+	 */
+	
+	/**
+	 * 게시글 댓글 등록
+	 * POST /api/boards/{postId}/comments
+	 */
+	@PreAuthorize("hasRole('USER')")
+	@PostMapping("/{postId}/comments")
+	public ResponseEntity<?> writeComment(
+			@PathVariable long postId,
+			@RequestBody InsertCommentRequestDto requestDto,
+			@AuthenticationPrincipal CustomUserDetails userDetails
+			){
+		String username = userDetails.getUsername(); // username 가져오기
+		boardService.insertComment(requestDto, username, postId);
+		
+		return ResponseEntity.ok(ApiResponse.success("댓글 등록 완료"));
+	}
+	
+
+	/**
+	 * 게시글 댓글 목록 조회
+	 * GET /api/boards/{postId}/comments
+	 */
+	
+	/**
+	 * 사용자 본인 글 조회
+	 * GET /api/boards/mine
+	 */
 }
