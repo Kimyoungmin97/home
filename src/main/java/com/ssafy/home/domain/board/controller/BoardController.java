@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +21,7 @@ import com.ssafy.home.domain.board.dto.BoardDetailResponseDto;
 import com.ssafy.home.domain.board.dto.BoardListResponseDto;
 import com.ssafy.home.domain.board.dto.InsertBoardRequestDto;
 import com.ssafy.home.domain.board.dto.InsertCommentRequestDto;
+import com.ssafy.home.domain.board.dto.UpdateBoardRequestDto;
 import com.ssafy.home.domain.board.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -54,6 +56,7 @@ public class BoardController {
 		return ResponseEntity.ok(ApiResponse.success(pagingList));
 	}
 	
+	
 	/**
 	 * 게시판 글 작성 (게시글 등록)
 	 * POST /api/boards
@@ -81,14 +84,25 @@ public class BoardController {
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 	
-	
 	/**
 	 * 게시글 수정
-	 * PUT /api/boards/{postId}
+	 * PATCH /api/boards/{postId}
 	 */
+	@PreAuthorize("hasRole('USER')")
+	@PatchMapping("/{postId}")
+	public ResponseEntity<?> updateBoard(
+			@PathVariable long postId,
+			@RequestBody UpdateBoardRequestDto requestDto,
+			@AuthenticationPrincipal CustomUserDetails userDetails
+			){
+		String username = userDetails.getUsername(); // username 가져오기
+		boardService.updateBoard(postId, requestDto, username);
+		return ResponseEntity.ok(ApiResponse.success("게시글 수정 완료"));
+	}
 	
 	/**
 	 * 게시글 삭제
+	 * (댓글 먼저 삭제되어야 함)
 	 * DELETE /api/boards/{postId}
 	 */
 	
@@ -109,7 +123,6 @@ public class BoardController {
 		return ResponseEntity.ok(ApiResponse.success("댓글 등록 완료"));
 	}
 	
-
 	/**
 	 * 게시글 댓글 목록 조회
 	 * GET /api/boards/{postId}/comments

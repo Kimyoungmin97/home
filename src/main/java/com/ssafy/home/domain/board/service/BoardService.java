@@ -1,6 +1,7 @@
 package com.ssafy.home.domain.board.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import com.ssafy.home.domain.board.dto.CommentResponseDto;
 import com.ssafy.home.domain.board.dto.InsertBoardRequestDto;
 import com.ssafy.home.domain.board.dto.InsertCommentRequestDto;
 import com.ssafy.home.domain.board.dto.PostDto;
+import com.ssafy.home.domain.board.dto.UpdateBoardRequestDto;
 import com.ssafy.home.domain.user.dao.UserDao;
 
 import lombok.RequiredArgsConstructor;
@@ -76,5 +78,37 @@ public class BoardService {
 		CommentDto comment = builder.build();
 		
 		return boardDao.insertComment(comment);
+	}
+	
+	/**
+	 * 게시글 수정
+	 */
+	public void updateBoard(long postId, UpdateBoardRequestDto requestDto, String username) {
+		
+		PostDto post = boardDao.selectPostById(postId);
+		if (post == null) {
+			throw new CustomException(ErrorCode.BOARD_NOT_FOUND);
+		}
+		
+		int userId = userDao.selectUserId(username);
+		if (post.getUserId() != userId) {
+			throw new CustomException(ErrorCode.BOARD_UPDATE_FORBIDDEN);
+		}
+		
+		// 수정
+		
+		// https://dev-coco.tistory.com/178
+		Optional.ofNullable(requestDto.getTitle())
+				.filter(title -> !title.isBlank())
+				.ifPresent(post::setTitle);
+		
+		Optional.ofNullable(requestDto.getContent())
+				.filter(content -> !content.isBlank())
+				.ifPresent(post::setContent);
+		
+		Optional.ofNullable(requestDto.getIsSecret())
+				.ifPresent(post::setSecret);
+		
+		boardDao.updateBoard(post);
 	}
 }

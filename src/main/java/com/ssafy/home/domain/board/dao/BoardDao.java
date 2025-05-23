@@ -41,4 +41,10 @@ public interface BoardDao {
 	 * 댓글 등록 (작성)
 	 */
 	int insertComment(CommentDto comment);
+	
+	/**
+	 * 수정
+	 */
+	PostDto selectPostById(long postId);
+	int updateBoard(PostDto post);
 }
