@@ -32,4 +32,8 @@ public class UserService {
 	public User selectDetail(String username) {
         return userDao.select(username);
     }
+	
+	public int selectUserId(String username) {
+		return userDao.selectUserId(username);
+	}
 }

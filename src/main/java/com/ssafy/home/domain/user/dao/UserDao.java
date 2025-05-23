@@ -10,4 +10,6 @@ public interface UserDao {
 	User select(String username); // 유저 정보 조회
 	
 	int update(User user);
+	
+	int selectUserId(String username); // username 조회
 }

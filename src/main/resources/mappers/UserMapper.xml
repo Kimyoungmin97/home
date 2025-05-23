@@ -26,6 +26,14 @@
     	where username=#{username}
     </select>
     
+    <select id="selectUserId"
+    		parameterType="string"
+    		resultType="int">
+    	select user_id
+    	from users
+    	where username=#{username}
+    </select>
+    
     <update id="update">
         update users 
 		set 
