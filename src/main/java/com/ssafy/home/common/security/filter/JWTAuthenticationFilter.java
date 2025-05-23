@@ -10,6 +10,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
+import com.ssafy.home.common.exception.CustomException;
+import com.ssafy.home.common.exception.ErrorCode;
 import com.ssafy.home.common.response.ApiResponse;
 import com.ssafy.home.common.security.dto.CustomUserDetails;
 import com.ssafy.home.common.security.util.JwtTokenProvider;
@@ -74,16 +76,16 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		return;
 	}
 	
-	/**
-	 * TODO : 여기서부터 다시 수정
-	 */
+	
 	// 로그인 실패
     @Override
     public void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException failed) {
-        // 예외 처리는 한 곳에서 처리하도록 전달
+    	// 예외 처리는 한 곳에서 처리하도록 전달
         throw failed;
     }
+    // Filter 에서는 @RestController 나 ExceptionHandler 가 예외를 안 잡아줌
+    // throw new CustomException(...) 해봤자 예외만 던져지고 응답은 클라이언트에게 전달이 안 됨
 	
 	
 }

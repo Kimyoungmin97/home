@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface ControllerHelper {
 	
 	// 결과 전송 helper 메소드
-    default void handleJsonResponse(HttpServletResponse response, Object data, HttpStatus status) {
+    public default void handleJsonResponse(HttpServletResponse response, Object data, HttpStatus status) {
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(status.value());
         try {
