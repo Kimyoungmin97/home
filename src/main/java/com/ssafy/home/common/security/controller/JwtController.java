@@ -50,7 +50,7 @@ public class JwtController {
             String username = (String) claims.get("username"); // Refresh Token 생성 시 넣었던 클레임 키
     	
             if (username == null) {
-                throw new CustomException(ErrorCode.MISSING_CLAIM_USERNAME);
+                throw new CustomException(ErrorCode.AUTH_CLAIM_MISSING);
             }
             
             // 2. DB에서 사용자 조회 및 Refresh Token 일치 여부 확인
@@ -60,7 +60,7 @@ public class JwtController {
                 log.warn("Invalid or mismatched refresh token for user: {}", username);
                 // 보안: DB의 토큰과 불일치 시, 해당 사용자의 DB 토큰을 무효화(null 처리)하는 것도 고려
                 // memberService.invalidateRefreshToken(email);
-                throw new CustomException(ErrorCode.REFRESH_TOKEN_MISMATCH); // Invalid refresh token
+                throw new CustomException(ErrorCode.AUTH_REFRESH_TOKEN_MISMATCH); // Invalid refresh token
             }
             
             // 3. 새 Access Token 생성
@@ -78,9 +78,9 @@ public class JwtController {
     	} catch (DataAccessException e) {
     		throw new CustomException(ErrorCode.DATABASE_ERROR);
     	} catch (ExpiredJwtException e) {
-    		throw new CustomException(ErrorCode.REFRESH_TOKEN_EXPIRED);
+    		throw new CustomException(ErrorCode.AUTH_REFRESH_TOKEN_EXPIRED);
     	} catch (JwtException e) {
-    		throw new CustomException(ErrorCode.INVALID_JWT_TOKEN);
+    		throw new CustomException(ErrorCode.AUTH_TOKEN_INVALID);
     	}
     }
 
@@ -97,7 +97,7 @@ public class JwtController {
             String username = (String) claims.get("username"); // Refresh Token 생성 시 넣었던 클레임 키
 
             if (username == null) {
-                throw new CustomException(ErrorCode.MISSING_CLAIM_USERNAME);
+                throw new CustomException(ErrorCode.AUTH_CLAIM_MISSING);
             }
             
             // 2. DB에서 사용자 조회 및 Refresh Token 초기화
@@ -113,9 +113,9 @@ public class JwtController {
     	} catch (DataAccessException e) {
     		throw new CustomException(ErrorCode.DATABASE_ERROR);
     	} catch (ExpiredJwtException e) {
-    		throw new CustomException(ErrorCode.REFRESH_TOKEN_EXPIRED);
+    		throw new CustomException(ErrorCode.AUTH_REFRESH_TOKEN_EXPIRED);
     	} catch (JwtException e) {
-    		throw new CustomException(ErrorCode.INVALID_JWT_TOKEN);
+    		throw new CustomException(ErrorCode.AUTH_TOKEN_INVALID);
     	}
     }
 }

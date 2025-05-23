@@ -41,8 +41,8 @@ public class APISecurityConfig {
             CustomUserDetailService userDetailsService,
             JWTAuthenticationFilter authFilter,
             JWTVerificationFilter jwtVerifyFilter,
-            SecurityExceptionHandlingFilter exceptionFilter)
-            throws Exception {
+            SecurityExceptionHandlingFilter exceptionFilter
+        ) throws Exception {
         // SecurityFilterChain을 생성
         // /api/**를 대상으로 하며 cors, userdetails, csrf, session 관련 설정을 처리
     	// /api/v1/etc/**, /api/auth/** 경로는 permitall 하고 나머지는(/api/v1/members) 인증을 요청한다.
@@ -54,7 +54,8 @@ public class APISecurityConfig {
     		.authorizeHttpRequests(auth -> auth
     				.requestMatchers(
     						"/api/auth/**",
-    						"/api/houses/**"
+    						"/api/houses/**",
+    						"/api/boards"
     						).permitAll()
 //    				.requestMatchers("/api/admin/**").hasRole("ADMIN")    // ADMIN 권한 필요
     				.anyRequest().authenticated()); // 로그인만 하면 OK

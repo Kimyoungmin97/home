@@ -1,8 +1,12 @@
 package com.ssafy.home.domain.board.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import com.ssafy.home.common.page.PageRequestDto;
 import com.ssafy.home.domain.board.dao.BoardDao;
+import com.ssafy.home.domain.board.dto.BoardListResponseDto;
 import com.ssafy.home.domain.board.dto.InsertBoardRequestDto;
 import com.ssafy.home.domain.board.dto.PostDto;
 import com.ssafy.home.domain.user.dao.UserDao;
@@ -30,4 +34,12 @@ public class BoardService {
 		
 		return boardDao.insertBoard(post);
 	};
+	
+	public List<BoardListResponseDto> getBoardList(PageRequestDto pageRequestDto) {
+		return boardDao.selectBoardList(pageRequestDto.getOffset(), pageRequestDto.getSize());
+	}
+	
+	public long getTotalCount() {
+		return boardDao.selectBoardCount();
+	}
 }

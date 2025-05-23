@@ -14,6 +14,17 @@
         <result column="updated_at" property="updatedAt"/>
 	</resultMap>
 	
+	<resultMap type="BoardListResponseDto" id="BoardListResponseMap">
+		<id column="post_id" property="postId"/>
+		<result column="apt_seq" property="aptSeq"/>
+        <result column="user_id" property="userId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="is_secret" property="isSecret"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+	</resultMap>
+	
 	<insert id="insertBoard" 
 			parameterType="PostDto"
 			useGeneratedKeys="true"
@@ -23,5 +34,16 @@
 		values (#{aptSeq}, #{userId}, #{title}, #{content}, #{isSecret});
 	</insert>
 	
+	<select id="selectBoardList" resultMap="BoardListResponseMap">
+		SELECT post_id, apt_seq, user_id, title, content, is_secret, created_at, updated_at 
+		FROM posts
+		ORDER BY created_at DESC
+		LIMIT #{size} OFFSET #{offset}
+	</select>
 	
+	<select id="selectBoardCount" resultType="long">
+		SELECT count(*)
+		FROM posts
+	</select>
+
 </mapper>
