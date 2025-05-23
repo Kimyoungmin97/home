@@ -118,5 +118,15 @@
 		</set>
 		WHERE post_id = #{postId}
 	</update>
+	
+	<delete id="deleteCommentByPostId" parameterType="long">
+		DELETE FROM comments
+		WHERE post_id = #{postId};
+	</delete>
+	
+	<delete id="deleteBoardByPostId" parameterType="long">
+		DELETE FROM posts
+		WHERE post_id = #{postId};
+	</delete>
 
 </mapper>

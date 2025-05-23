@@ -47,4 +47,10 @@ public interface BoardDao {
 	 */
 	PostDto selectPostById(long postId);
 	int updateBoard(PostDto post);
+	
+	/**
+	 * 게시글 삭제
+	 */
+	int deleteCommentByPostId(long postId);
+	int deleteBoardByPostId(long postId);
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -105,6 +106,17 @@ public class BoardController {
 	 * (댓글 먼저 삭제되어야 함)
 	 * DELETE /api/boards/{postId}
 	 */
+	@PreAuthorize("hasRole('USER')")
+	@DeleteMapping("/{postId}")
+	public ResponseEntity<?> deleteBoard(
+			@PathVariable long postId,
+			@AuthenticationPrincipal CustomUserDetails userDetails
+			){
+		String username = userDetails.getUsername(); // username 가져오기
+		boardService.deleteBoard(username, postId);
+		
+		return ResponseEntity.ok(ApiResponse.success("게시글 삭제 완료"));
+	}
 	
 	/**
 	 * 게시글 댓글 등록

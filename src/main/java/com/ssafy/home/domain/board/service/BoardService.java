@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.home.common.exception.CustomException;
 import com.ssafy.home.common.exception.ErrorCode;
@@ -110,5 +111,30 @@ public class BoardService {
 				.ifPresent(post::setSecret);
 		
 		boardDao.updateBoard(post);
+	}
+	
+	/**
+	 * 게시글 삭제
+	 * @param username
+	 * @param postId
+	 * @return
+	 */
+	@Transactional
+	public void deleteBoard(String username, long postId) {
+		
+		PostDto post = boardDao.selectPostById(postId);
+		int userId = userDao.selectUserId(username);
+		if (post==null || Long.compare(post.getUserId(), userId) != 0) {
+			throw new CustomException(ErrorCode.BOARD_DELETE_FORBIDDEN);
+		}
+		
+		// 댓글 먼저 삭제
+		boardDao.deleteCommentByPostId(postId);
+		
+		// 게시글 삭제
+		int cnt = boardDao.deleteBoardByPostId(postId);
+		if (cnt==0) {
+			throw new CustomException(ErrorCode.BOARD_NOT_FOUND);
+		}
 	}
 }
