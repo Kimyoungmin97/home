@@ -11,5 +11,5 @@ public class InsertBoardRequestDto {
 	private String content;		// 내용
 	
 	@JsonProperty("isSecret")
-	private Boolean Secret;	// 비밀글 여부
+	private Boolean secret;	// 비밀글 여부
 }

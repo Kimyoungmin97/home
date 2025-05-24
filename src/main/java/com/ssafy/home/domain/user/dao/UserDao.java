@@ -11,5 +11,5 @@ public interface UserDao {
 	
 	int update(User user);
 	
-	int selectUserId(String username); // username 조회
+	int selectUserIdByUsername(String username); // username 조회
 }

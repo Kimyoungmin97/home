@@ -57,7 +57,7 @@
 		values (#{aptSeq}, #{userId}, #{title}, #{content}, #{isSecret});
 	</insert>
 	
-	<select id="selectBoardList" resultMap="BoardListResponseMap">
+	<select id="selectBoardsByPage" resultMap="BoardListResponseMap">
 		SELECT post_id, apt_seq, user_id, title, content, is_secret, created_at, updated_at 
 		FROM posts
 		ORDER BY created_at DESC
@@ -119,7 +119,7 @@
 		WHERE post_id = #{postId}
 	</update>
 	
-	<delete id="deleteCommentByPostId" parameterType="long">
+	<delete id="deleteAllCommentsByPostId" parameterType="long">
 		DELETE FROM comments
 		WHERE post_id = #{postId};
 	</delete>

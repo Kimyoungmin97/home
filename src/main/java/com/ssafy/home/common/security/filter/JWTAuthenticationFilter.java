@@ -10,8 +10,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
-import com.ssafy.home.common.exception.CustomException;
-import com.ssafy.home.common.exception.ErrorCode;
 import com.ssafy.home.common.response.ApiResponse;
 import com.ssafy.home.common.security.dto.CustomUserDetails;
 import com.ssafy.home.common.security.util.JwtTokenProvider;

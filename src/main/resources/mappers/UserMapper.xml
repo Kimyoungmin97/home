@@ -26,7 +26,7 @@
     	where username=#{username}
     </select>
     
-    <select id="selectUserId"
+    <select id="selectUserIdByUsername"
     		parameterType="string"
     		resultType="int">
     	select user_id
