@@ -8,8 +8,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.Getter;
 
 /**
@@ -34,10 +32,5 @@ public class AIConfig {
 		headers.setBearerAuth(gptKey);
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		return headers;
-	}
-	
-	@Bean
-	public ObjectMapper objectMapper() {
-		return new ObjectMapper();
 	}
 }

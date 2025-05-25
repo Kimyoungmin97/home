@@ -128,5 +128,33 @@
 		DELETE FROM posts
 		WHERE post_id = #{postId};
 	</delete>
+	
+	<select id="selectCommentById" resultMap="CommentResponseMap">
+		SELECT * FROM comments
+		WHERE post_id = #{postId} AND comment_id = #{commentId}
+		ORDER BY created_at ASC
+	</select>
+	
+	<update id="updateComment">
+	    UPDATE comments
+	    SET content = #{content}
+	    WHERE comment_id = #{commentId}
+	      AND post_id = #{postId}
+	      AND user_id = #{userId}
+	</update>
+	
+	<delete id="deleteComment">
+	    DELETE FROM comments
+	    WHERE comment_id = #{commentId}
+	      AND post_id = #{postId}
+	      AND user_id = #{userId}
+	</delete>
+	
+	<select id="findBoardsByUserId" resultMap="BoardListResponseMap">
+	    SELECT p.*
+	    FROM posts p
+	    WHERE p.user_id = #{userId}
+	    ORDER BY p.created_at DESC
+	</select>
 
 </mapper>

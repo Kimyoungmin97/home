@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.home.domain.place.hospital.dao.HospitalDao">
+
+	<resultMap type="HospitalResponseDto" id="HospitalResponseMap">
+		<id column="id" property="id"/>
+		<result column="encrypted_code" property="encryptedCode"/>
+        <result column="name" property="name"/>
+        <result column="address" property="address"/>
+        <result column="phone" property="phone"/>
+        <result column="org_type_name" property="orgTypeName"/>
+        <result column="latitude" property="latitude"/>
+        <result column="longitude" property="longitude"/>
+        <result column="departments" property="departmentsRaw"/>
+	</resultMap>
+	
+	<resultMap type="HospitalDetailResponseDto" id="HospitalDetailResultMap">
+	    <id property="id" column="id"/>
+	    <result property="encryptedCode" column="encrypted_code"/>
+	    <result property="name" column="name"/>
+	    <result property="sidoCode" column="sido_code"/>
+	    <result property="sidoName" column="sido_name"/>
+	    <result property="sigunguCode" column="sigungu_code"/>
+	    <result property="sigunguName" column="sigungu_name"/>
+	    <result property="eupmyeondong" column="eupmyeondong"/>
+	    <result property="zipcode" column="zipcode"/>
+	    <result property="address" column="address"/>
+	    <result property="latitude" column="latitude"/>
+	    <result property="longitude" column="longitude"/>
+	    <result property="phone" column="phone"/>
+	    <result property="homepage" column="homepage"/>
+	    <result property="orgTypeCode" column="org_type_code"/>
+	    <result property="orgTypeName" column="org_type_name"/>
+	    <result property="doctorTotal" column="doctor_total"/>
+	    <result property="doctorGeneral" column="doctor_general"/>
+	    <result property="doctorIntern" column="doctor_intern"/>
+	    <result property="doctorResident" column="doctor_resident"/>
+	    <result property="doctorSpecialist" column="doctor_specialist"/>
+	    <result property="midwifeCount" column="midwife_count"/>
+	    <result property="bedHighclass" column="bed_highclass"/>
+	    <result property="bedGeneral" column="bed_general"/>
+	    <result property="bedAdultIcu" column="bed_adult_icu"/>
+	    <result property="bedChildIcu" column="bed_child_icu"/>
+	    <result property="bedNewbornIcu" column="bed_newborn_icu"/>
+	    <result property="bedBirth" column="bed_birth"/>
+	    <result property="bedSurgery" column="bed_surgery"/>
+	    <result property="bedEmergency" column="bed_emergency"/>
+	    <collection property="departments" ofType="HospitalDepartmentsDto" resultMap="HospitalDepartmentsMap"/>
+	</resultMap>
+	
+	<resultMap type="HospitalDepartmentsDto" id="HospitalDepartmentsMap">
+		<result property="subjectName" column="subject_name"/>
+        <result property="subjectCode" column="subject_code"/>
+        <result property="specialistCount" column="specialist_count"/>
+        <result property="selectiveDoctorCount" column="selective_doctor_count"/>
+	</resultMap>
+
+	<select id="selectHospitalsInRange" resultMap="HospitalResponseMap">
+	    SELECT 
+	        h.id, h.encrypted_code, h.name, h.address, h.phone, h.org_type_name, h.latitude, h.longitude,
+	        GROUP_CONCAT(d.subject_name SEPARATOR ',') AS departments
+	    FROM hospitals h
+	    LEFT JOIN hospital_departments d ON h.encrypted_code = d.hospital_code
+	    WHERE (h.latitude BETWEEN #{minLat} AND #{maxLat})
+      		AND (h.longitude BETWEEN #{minLng} AND #{maxLng})
+		    AND (
+		    	d.subject_name LIKE '%소아%' OR
+			    d.subject_name LIKE '%청소년%' OR
+			    d.subject_name LIKE '%내과%' OR
+			    d.subject_name LIKE '%외과%' OR
+			    d.subject_name LIKE '%산부인과%' OR
+			    d.subject_name LIKE '%가정의학%' OR
+			    h.bed_emergency > 0
+	  		)
+		GROUP BY h.id
+	</select>
+	
+	<select id="selectHospitalDetailById" resultMap="HospitalDetailResultMap">
+		select h.*, d.subject_name, d.subject_code, d.specialist_count, d.selective_doctor_count 
+		from hospitals h
+		left join hospital_departments d ON h.encrypted_code = d.hospital_code
+		where h.id=#{id}
+	</select>
+</mapper>

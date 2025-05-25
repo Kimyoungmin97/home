@@ -18,7 +18,7 @@
         <result column="updated_at" property="updatedAt"/>
     </resultMap>
     
-    <select id="select" 
+    <select id="selectAllByUsername" 
     		parameterType="string" 
     		resultMap="userMap">
     	select * 

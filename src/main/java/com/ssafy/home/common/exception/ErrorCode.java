@@ -41,11 +41,11 @@ public enum ErrorCode {
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "데이터베이스 처리 중 오류가 발생했습니다."),
 	
 	// Board
-	BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."),
-	BOARD_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 게시글에 대한 권한이 없습니다."),
-	BOARD_WRITE_FORBIDDEN(HttpStatus.FORBIDDEN, "게시글 작성 권한이 없습니다."),
-	BOARD_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN, "게시글 수정 권한이 없습니다."),
-	BOARD_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "게시글 삭제 권한이 없습니다."),
+	BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글/댓글이 존재하지 않습니다."),
+	BOARD_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 게시글/댓글에 대한 권한이 없습니다."),
+	BOARD_WRITE_FORBIDDEN(HttpStatus.FORBIDDEN, "게시글/댓글 작성 권한이 없습니다."),
+	BOARD_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN, "게시글/댓글 수정 권한이 없습니다."),
+	BOARD_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "게시글/댓글 삭제 권한이 없습니다."),
 	
 	// ChatGPT(OpenAI)
 	GPT_EXTERNAL_API_ERROR(HttpStatus.BAD_GATEWAY, "GPT API 호출 중 오류가 발생했습니다."),

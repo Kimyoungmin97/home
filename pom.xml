@@ -161,6 +161,14 @@
             <version>0.12.6</version>
         </dependency>
         
+        <!-- JSON 날짜 직렬화 -->
+        <!--
+        <dependency>
+		  <groupId>com.fasterxml.jackson.datatype</groupId>
+		  <artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+		-->
+        
         <!-- OpenAI Chat API -->
         <dependency>
 		  <groupId>io.github.flashvayne</groupId>
