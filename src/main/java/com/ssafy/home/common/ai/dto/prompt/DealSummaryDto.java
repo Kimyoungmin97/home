@@ -1,4 +1,4 @@
-package com.ssafy.home.domain.house.dto;
+package com.ssafy.home.common.ai.dto.prompt;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class YearlyPriceDto {
-	private String year;
-	private String price;
+public class DealSummaryDto {
+	private String dealDate;	
+	private String dealAmount;
 }

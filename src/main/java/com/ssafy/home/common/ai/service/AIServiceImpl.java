@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.home.common.ai.dto.AICompletionDto;
+import com.ssafy.home.common.ai.dto.openai.AICompletionRequestDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -95,9 +95,9 @@ public class AIServiceImpl implements AIService {
      * @return chatCompletionDto
      */
     @Override
-    public Map<String, Object> prompt(AICompletionDto completionDto) {
+    public Map<String, Object> prompt(AICompletionRequestDto completionDto) {
     	try {
-            HttpEntity<AICompletionDto> request = new HttpEntity<>(completionDto, httpHeaders);
+            HttpEntity<AICompletionRequestDto> request = new HttpEntity<>(completionDto, httpHeaders);
             ResponseEntity<String> response = restTemplate.exchange(
                 promptUrl, HttpMethod.POST, request, String.class
             );

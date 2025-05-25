@@ -1,4 +1,4 @@
-package com.ssafy.home.common.ai.dto;
+package com.ssafy.home.common.ai.dto.openai;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class AICompletionDto {
+public class AICompletionRequestDto {
 	private String model;	// 사용 모델
 	private Double temperature;	// 창의성 정도
 	private List<AIRequestMessageDto> messages;	// 메시지 리스트

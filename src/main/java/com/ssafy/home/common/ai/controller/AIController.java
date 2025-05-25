@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.home.common.ai.dto.AICompletionDto;
+import com.ssafy.home.common.ai.dto.openai.AICompletionRequestDto;
 import com.ssafy.home.common.ai.service.AIService;
 
 import lombok.RequiredArgsConstructor;
@@ -60,7 +60,7 @@ public class AIController {
 	 * @return
 	 */
 	@PostMapping("/prompt")
-	public ResponseEntity<Map<String, Object>> selectPrompt(@RequestBody AICompletionDto requestDto){
+	public ResponseEntity<Map<String, Object>> selectPrompt(@RequestBody AICompletionRequestDto requestDto){
 		log.info("요청 DTO: {}", requestDto);
 		Map<String, Object> result = aiService.prompt(requestDto);
 		return ResponseEntity.ok(result);

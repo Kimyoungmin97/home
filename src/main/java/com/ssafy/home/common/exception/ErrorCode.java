@@ -45,7 +45,11 @@ public enum ErrorCode {
 	BOARD_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 게시글에 대한 권한이 없습니다."),
 	BOARD_WRITE_FORBIDDEN(HttpStatus.FORBIDDEN, "게시글 작성 권한이 없습니다."),
 	BOARD_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN, "게시글 수정 권한이 없습니다."),
-	BOARD_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "게시글 삭제 권한이 없습니다.")
+	BOARD_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "게시글 삭제 권한이 없습니다."),
+	
+	// ChatGPT(OpenAI)
+	GPT_EXTERNAL_API_ERROR(HttpStatus.BAD_GATEWAY, "GPT API 호출 중 오류가 발생했습니다."),
+	GPT_RESPONSE_EMPTY(HttpStatus.BAD_GATEWAY, "GPT 응답이 비어 있습니다."),
 	;
     
     

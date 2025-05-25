@@ -1,4 +1,4 @@
-package com.ssafy.home.common.ai.dto;
+package com.ssafy.home.common.ai.dto.openai;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
