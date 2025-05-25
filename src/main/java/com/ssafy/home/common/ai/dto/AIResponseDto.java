@@ -1,22 +1,17 @@
 package com.ssafy.home.common.ai.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * OpenAI에 보낼 때 사용하는 하나의 "메시지" (role+content)
+ * GPT 응답 content 만 추출해서 응답으로 반환
  */
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class AIRequestMessageDto {
-	
-	private String role;	// "system", "user"
+public class AIResponseDto {
 	private String content;
-	
 }
