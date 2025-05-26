@@ -36,4 +36,8 @@ public class UserService {
 	public int selectUserId(String username) {
 		return userDao.selectUserIdByUsername(username);
 	}
+	
+	public int insert(User user) {
+		return userDao.insert(user);
+	}
 }

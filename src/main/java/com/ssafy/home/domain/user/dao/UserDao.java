@@ -12,4 +12,10 @@ public interface UserDao {
 	int update(User user);
 	
 	int selectUserIdByUsername(String username); // username 조회
+	
+	int insert(User user);
+
+	int delete(int userId);
+	
+	int updateProfile(String username, byte[] profileImage);
 }

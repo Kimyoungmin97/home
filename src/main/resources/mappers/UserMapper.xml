@@ -43,6 +43,37 @@
 			refresh_token=#{refreshToken}
 		where username=#{username}
     </update>
+    
+   	<insert id="insert" useGeneratedKeys="true" keyProperty="userId">
+       insert into users (
+       					username
+       				  , password
+       				  , name
+       				  , email
+       				  , apt_seq
+       				  , created_at
+       				  , role
+       				  )
+       values(
+       		#{username}
+		  , #{password}
+		  , #{name}
+		  , #{email}
+		  , #{aptSeq}
+		  , NOW()
+		  , 'USER'
+      		  )
+    </insert>
+    
+    <delete id="delete">
+	    delete from users
+	    where user_id = #{userId}
+    </delete>
+    
+    <update id="updateProfile">
+        update users
+        set profile_image=#{profileImage}
+        where username = #{username}
+    </update>
 
-	
 </mapper>

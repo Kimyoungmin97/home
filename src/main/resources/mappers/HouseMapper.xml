@@ -4,53 +4,81 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.home.domain.house.dao.HouseDao">
 	
-	<resultMap id="apartmentSearchResponseMap" type="SearchHouseResponseDto">
-		<!-- <id column="id" property="id"/> -->
-		<result column="apt_seq" property="aptSeq"/>
-		<result column="umd_nm" property="umdNm"/>
-        <result column="jibun" property="jibun"/>
-        <result column="road_nm" property="roadNm"/>
-        <result column="road_nm_bonbun" property="roadNmBonbun"/>
-        <result column="road_nm_bubun" property="roadNmBubun"/>
-        <result column="apt_nm" property="aptNm"/>
-        <result column="latitude" property="latitude"/>
-        <result column="longitude" property="longitude"/>
+	<resultMap id="SearchHouseResponseMap" type="SearchHouseResponseDto">
+		<id column="apt_seq" property="aptSeq"/>
+		<result column="apt_nm" property="aptNm"/>
+		<result column="address" property="address"/>
+		<result column="price" property="price"/>
+		<result column="latitude" property="latitude"/>
+		<result column="longitude" property="longitude"/>
+		<result column="avg_price_all" property="avgPriceAll"/>
+		<result column="avg_price_near_peak" property="avgPriceNearPeak"/>
 	</resultMap>
 	
 	<resultMap id="houseDealResponseMap" type="HouseDealResponseDto">
-	    <result column="apt_seq" property="aptSeq"/>
-	    <result column="apt_nm" property="aptName"/>
-	    <result column="apt_dong" property="aptDong"/>
-	    <result column="floor" property="floor"/>
-	    <result column="exclu_use_ar" property="exclusiveUseArea"/>
-	    <result column="deal_amount" property="dealAmount"/>
-	    <result column="deal_date" property="dealDate"/>
-	    <result column="avg_deal_amount" property="avgDealAmount"/>
+		<id column="no" property="no"/>
+		<result column="date" property="date"/>
+		<result column="floor" property="floor"/>
+		<result column="exclu_use_ar" property="excluUseAr"/>
+		<result column="deal_amount" property="dealAmount"/>
+		<result column="price" property="price"/>
 	</resultMap>	
 	
 	<!-- 검색어로 특정 아파트 조회 (GET /apartments/search?keyword=?) -->
-	<select id="searchHousesByKeyword" 
-			parameterType="string" 
-			resultMap="apartmentSearchResponseMap">
-		select 
-			apt_seq, 
-		    umd_nm, jibun, road_nm, road_nm_bonbun, road_nm_bubun, 
-		    apt_nm, 
-		    latitude, longitude
-			from houseinfos
-		where apt_nm like concat('%', #{keyword} , '%');
+	<select id="searchHousesByKeyword" parameterType="SearchHouseRequestDto" resultMap="SearchHouseResponseMap">
+		SELECT hi.apt_seq
+			 , hi.apt_nm
+		     , CONCAT(dc.sido_name, ' ', dc.gugun_name, ' ', dc.dong_name, ' ', hi.jibun) AS address
+		     , hd.deal_amount price
+		     , hi.latitude
+   			 , hi.longitude
+   			 , (SELECT ROUND(AVG(CAST(REPLACE(deal_amount, ',', '') AS UNSIGNED)))
+			      FROM housedeals
+			     WHERE apt_seq = hi.apt_seq
+			   ) AS avg_price_all
+			 ,(SELECT ROUND(AVG(CAST(REPLACE(deal_amount, ',', '') AS UNSIGNED)))
+		         FROM housedeals
+			    WHERE apt_seq = hi.apt_seq
+			      AND STR_TO_DATE(CONCAT(deal_year, LPAD(deal_month, 2, '0'), LPAD(deal_day, 2, '0')), '%Y%m%d')
+			  BETWEEN STR_TO_DATE(CONCAT(hd.deal_year, LPAD(hd.deal_month, 2, '0'), LPAD(hd.deal_day, 2, '0')), '%Y%m%d') - INTERVAL 1 MONTH
+			      AND STR_TO_DATE(CONCAT(hd.deal_year, LPAD(hd.deal_month, 2, '0'), LPAD(hd.deal_day, 2, '0')), '%Y%m%d') + INTERVAL 1 MONTH
+			  ) AS avg_price_near_peak
+		  FROM houseinfos hi
+		  JOIN dongcodes dc ON CONCAT(hi.sgg_cd, hi.umd_cd) = dc.dong_code
+		  JOIN housedeals hd ON hd.no = (
+											SELECT no
+											  FROM housedeals
+											 WHERE apt_seq = hi.apt_seq
+											 ORDER BY CAST(REPLACE(deal_amount, ',', '') AS UNSIGNED) DESC
+											 LIMIT 1
+										)
+		 WHERE hi.apt_nm like concat('%', #{keyword}, '%')
+		 <if test="lastAptSeq != null">
+		   AND (
+		        SUBSTRING_INDEX(hi.apt_seq, '-', 1) + 0 > SUBSTRING_INDEX(#{lastAptSeq}, '-', 1) + 0
+		        OR (
+		            SUBSTRING_INDEX(hi.apt_seq, '-', 1) + 0 = SUBSTRING_INDEX(#{lastAptSeq}, '-', 1) + 0
+		            AND SUBSTRING_INDEX(hi.apt_seq, '-', -1) + 0 > SUBSTRING_INDEX(#{lastAptSeq}, '-', -1) + 0
+		       )
+		    )
+	     </if>
+	     ORDER BY SUBSTRING_INDEX(hi.apt_seq, '-', 1) + 0
+	         , SUBSTRING_INDEX(hi.apt_seq, '-', -1) + 0
+		 LIMIT #{size}
 	</select>
 	
 	<!-- 특정 매물의 실거래가 전체 내역 출력 -->
-	<select id="getHouseDealsByAptSeq" parameterType="string" resultMap="houseDealResponseMap">
-	    SELECT 
-		    row_number() over ( order by str_to_date(concat(hd.deal_year, lpad(hd.deal_month, 2, '0'), lpad(hd.deal_day, 2, '0')), '%Y%m%d') desc ) as no
-		    ,hi.apt_seq, hi.apt_nm, hd.apt_dong, hd.floor, hd.exclu_use_ar, hd.deal_amount, 
-		    str_to_date(concat(hd.deal_year, lpad(hd.deal_month, 2, '0'), lpad(hd.deal_day, 2, '0')), '%Y%m%d') AS deal_date
-		FROM housedeals hd 
-		JOIN houseinfos hi ON hd.apt_seq = hi.apt_seq
-		WHERE hi.apt_seq = #{aptSeq}
-		ORDER BY deal_date desc;
+	<select id="selectHouseDealsByAptSeq" parameterType="string" resultMap="houseDealResponseMap">
+		SELECT row_number() over ( order by STR_TO_DATE(CONCAT(hd.deal_year, lpad(hd.deal_month, 2, '0'), lpad(hd.deal_day, 2, '0')), '%Y%m%d') desc ) as no
+			 , CONCAT(RIGHT(hd.deal_year,2), '.', hd.deal_month, '.', hd.deal_day) AS date
+		     , hd.floor
+		     , hd.exclu_use_ar
+		     , FLOOR(REPLACE(hd.deal_amount, ',', '')) AS deal_amount
+	 		 , CONCAT(FLOOR(REPLACE(hd.deal_amount, ',', '') / 10000), '억 ', LPAD(FORMAT(REPLACE(hd.deal_amount, ',', '') % 10000, 0), 4, '0')) AS price
+	  	FROM houseinfos hi
+	  	JOIN dongcodes dc ON CONCAT(hi.sgg_cd, hi.umd_cd) = dc.dong_code
+	  	JOIN housedeals hd ON hi.apt_seq = hd.apt_seq
+	 	WHERE hi.apt_seq = #{aptSeq}
 	</select>
 	
 </mapper>

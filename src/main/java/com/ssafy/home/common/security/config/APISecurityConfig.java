@@ -58,7 +58,8 @@ public class APISecurityConfig {
     						"/api/boards/**",
     						"/api/ai/**",
     						"/api/places/hospitals/**",
-    						"/api/notices/**"
+    						"/api/notices/**",
+    						"/api/users/**"
     						).permitAll()
 //    				.requestMatchers("/api/admin/**").hasRole("ADMIN")    // ADMIN 권한 필요
     				.anyRequest().authenticated()); // 로그인만 하면 OK

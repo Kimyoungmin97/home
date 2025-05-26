@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,64 +19,70 @@ import com.ssafy.home.common.exception.CustomException;
 import com.ssafy.home.common.exception.ErrorCode;
 import com.ssafy.home.common.response.ApiResponse;
 import com.ssafy.home.domain.house.dto.HouseDealResponseDto;
+import com.ssafy.home.domain.house.dto.SearchHouseRequestDto;
 import com.ssafy.home.domain.house.dto.SearchHouseResponseDto;
 import com.ssafy.home.domain.house.service.HouseService;
+import com.ssafy.home.domain.house.service.RedisService;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController // @RequestBody 생략 가능
 @RequiredArgsConstructor
 @RequestMapping("/api/houses")
-@Tag(name = "HouseController", description = "실거래가 관련 기능 처리")
 public class HouseController {
 	
 	private final HouseService houseService;
-
-	// GET /api/houses/search?keyword=한신
-	// @Secured("ROLE_USER")
-//	@PreAuthorize("hasRole('USER')")
+	private final RedisService redisService;
+	
+	/**
+	 * 검색어로 아파트 조회
+	 * 아파트명으로 검색 시, 해당 키워드를 포함한 apt_nm을 가진 매물 정보 리스트를 반환한다.
+	 * 
+	 * GET /api/houses/search
+	 */
 	@GetMapping("/search")
-	@Operation(summary = "검색어로 아파트 조회", description = "아파트명으로 검색 시, 해당 키워드를 포함한 apt_nm을 가진 매물 정보 리스트를 반환한다.")
-	public ResponseEntity<?> searchHousesByKeyword(@RequestParam String keyword){ 
+	public ResponseEntity<?> searchHousesByKeyword(
+			@ModelAttribute SearchHouseRequestDto house){ 
 		List<SearchHouseResponseDto> result;
 		try {
-			result = houseService.searchHousesByKeyword(keyword);  	
+			result = houseService.searchHousesByKeyword(house);  	
+			return ResponseEntity.ok(ApiResponse.success(result));
 		} catch (DataAccessException e) {
 			throw new CustomException(ErrorCode.ENTITY_NOT_FOUND);
-		}
-		
-		return ResponseEntity.ok(ApiResponse.success(result));
+		}	
 	}
 	
-	// GET /api/v1/houses/{aptSeq}/deals
+	/**
+	 * 아파트 코드로 실거래가 내역 전체 조회
+	 * 아파트 코드(apt_seq)에 해당하는 전체 실거래가 내역 반환
+	 * 
+	 * GET /api/houses/{aptSeq}/deals
+	 */
 	@GetMapping("/{aptSeq}/deals")
-	@Operation(summary = "아파트 코드로 실거래가 내역 전체 조회", description = "아파트 코드(apt_seq)에 해당하는 전체 실거래가 내역 반환")
 	public ResponseEntity<ApiResponse<List>> getHouseDealsByAptSeq(@PathVariable String aptSeq){ 
-		List<HouseDealResponseDto> result = new ArrayList<>();
+		List<HouseDealResponseDto> list = new ArrayList<>();
 		try {
-			result = houseService.getHouseDealsByAptSeq(aptSeq);
-//			return handleSuccess(result);
+			list = houseService.getHouseDealsByAptSeq(aptSeq);
 		} catch (DataAccessException e) {
 			 throw new CustomException(ErrorCode.ENTITY_NOT_FOUND);
-//			return ResponseEntity
-//                    .status(500)
-//                    .body(ApiResponse.fail(500, "서버 내부 오류가 발생했습니다.",result));
 		}
-		return ResponseEntity.ok(ApiResponse.success(result));
+		return ResponseEntity.ok(ApiResponse.success(list));
 	}
 	
-	// /api/houses/{houseId}/deals?sort=price_desc
-	// /api/houses/{houseId}/deals?year=2024&month=3
+	@GetMapping("/search/popular")
+    public ResponseEntity<ApiResponse<List<String>>> popularKeywords() {
+        var redisResults = redisService.getTopKeywords(10);
+        List<String> keywords = redisResults.stream()
+                .map(ZSetOperations.TypedTuple::getValue)
+                .toList();
+        return ResponseEntity.ok(ApiResponse.success(keywords));
+    }
 	
-//	ApartmentSearchRequestDto requestDto = ApartmentSearchRequestDto.builder()
-//	.keyword(keyword)
-//	.build();
-	
-	// 조회 정보 없음
-//	if (result==null) return ResponseEntity.status(HttpStatus.NOT_FOUND) // 404
-//			.body("조회된 데이터가 없습니다.");
-//			// .build(); // 404
+	@GetMapping("/search/recent")
+	public ResponseEntity<ApiResponse<List<String>>> recentKeywords() {
+	    String userId = "user123"; // 예시
+	    List<String> recents = redisService.getRecentKeywords(userId);
+	    return ResponseEntity.ok(ApiResponse.success(recents));
+	}
 	
 }
