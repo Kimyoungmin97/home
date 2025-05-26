@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.home.domain.notice.dao.NoticeDao">
+
+	<resultMap type="NoticeListResponseDto" id="NoticeListResponseMap">
+		<id column="notice_id" property="noticeId"/>
+		<result column="title" property="title"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="is_important" property="isImportant"/>
+        <result column="content" property="content"/>
+		<collection property="attachments" ofType="NoticeAttachmentDto" resultMap="NoticeAttachmentMap"></collection>
+	</resultMap>
+	
+	<resultMap type="NoticeAttachmentDto" id="NoticeAttachmentMap">
+		<id column="attachment_id" property="attachmentId"/>
+		<result column="name" property="name"/>
+        <result column="url" property="url"/>
+	</resultMap>
+
+	
+	<select id="selectAllNotices" resultMap="NoticeListResponseMap">
+		SELECT n.notice_id, n.title, n.created_at, n.is_important, n.content, na.attachment_id, na.name, na.url
+		FROM notices n
+        LEFT JOIN notice_attachments na ON n.notice_id = na.notice_id
+		ORDER BY created_at DESC;
+	</select>
+
+</mapper>
